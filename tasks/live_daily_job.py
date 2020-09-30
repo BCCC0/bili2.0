@@ -195,21 +195,27 @@ class SendGiftTask(Sched, DontWait, Unique):
         # filter 用过期来过滤
         expiring_giftbags = []
         for gift in gift_bags:
-            left_time = gift[3]
-            if left_time is not None and 0 < int(left_time) < time_set:
-                expiring_giftbags.append(gift[:3])
-        if expiring_giftbags:
-            print('发现即将过期的礼物')
-            if user.task_ctrl['clean_expiring_gift2all_medal']:
-                print('正在清理过期礼物到用户勋章')
+            # left_time = gift[3]
+            # if left_time is not None and 0 < int(left_time) < time_set:
+            # 获得所有礼物
+            expiring_giftbags.append(gift[:3])
+
+        if user.task_ctrl['clean_expiring_gift2all_medal']:
+                print('正在清理过期礼物到指定房间')
                 medals = await UtilsTask.fetch_medals(user)
-                expiring_giftbags = await SendGiftTask.fill_intimacy(user, expiring_giftbags, medals, gift_intimacy)
-                
-            print('正在清理过期礼物到指定房间')
-            for gift_id, gift_num, bag_id in expiring_giftbags:
                 await UtilsTask.send_gift(user, room_id, gift_num, bag_id, gift_id)
-        else:
-            print('未发现即将过期的礼物')
+        # if expiring_giftbags:
+        #     print('发现即将过期的礼物')
+        #     if user.task_ctrl['clean_expiring_gift2all_medal']:
+        #         print('正在清理过期礼物到用户勋章')
+        #         medals = await UtilsTask.fetch_medals(user)
+        #         expiring_giftbags = await SendGiftTask.fill_intimacy(user, expiring_giftbags, medals, gift_intimacy)
+                
+        #     print('正在清理过期礼物到指定房间')
+        #     for gift_id, gift_num, bag_id in expiring_giftbags:
+        #         await UtilsTask.send_gift(user, room_id, gift_num, bag_id, gift_id)
+        # else:
+        #     print('未发现即将过期的礼物')
     
     @staticmethod
     async def send_medal_gift(user, gift_intimacy: dict):
